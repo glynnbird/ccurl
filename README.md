@@ -87,6 +87,14 @@ or this line can be added to your "~/.bashrc" or "~/.bash_profile" file.
   {"ok":true}
 ```  
 
+### Other curl command-line parameters work too
+
+```
+  ccurl -h
+  ccurl -v
+  etc. 
+```
+
 ## Using ccurl with jq
 
 [jq](http://stedolan.github.io/jq/) is a command-line json utility, and as ccurl returns JSON, it can be piped in-line to colour the JSON:
