@@ -1,17 +1,28 @@
-# ccurl
+# ccurl - 'couchdb curl'
 
 If you use CouchDB, then you can access everything using curl. The trouble is, that it if you are using an authenticated, hosted service such as Cloudant's, then your credentials appear on your command-line history and there is a lot of typing. e.g.
 
 ```
-  curl 'https://mypassword:MyPAssw0rd@myhost.cloudant.com/datbase/12345678'
+  curl 'https://mypassword:MyPAssw0rd@myhost.cloudant.com/database/12345678'
 ```
 
 With ccurl, this becomes:
 
 ```
-  ccurl '/datbase/12345678'
+  ccurl /database/12345678
 ```
 
+Or adding a document with curl:
+
+```
+  curl -X POST -H 'Content-type:application/json' 'https://mypassword:MyPAssw0rd@myhost.cloudant.com/database' -d'{"a":1,"b":2}'
+```
+
+With ccurl, this becomes:
+
+```
+  ccurl -X POST /database -d'{"a":1,"b":2}'
+```
 
 ## Installing
 
@@ -38,6 +49,7 @@ or this line can be added to your "~/.bashrc" or "~/.bash_profile" file.
 * all command-line switches are passed through to curl
 * instead of passing through a full url, pass through a relative url
 * if the url is omitted, then a relative url of "/" is assumed
+* the content-type of 'application-json' is added for you
 
 ## Examples
 
@@ -71,7 +83,20 @@ or this line can be added to your "~/.bashrc" or "~/.bash_profile" file.
 ### Remove a database
 
 ```
-  ccurl -X DELETE /newdatabase
+  > ccurl -X DELETE /newdatabase
   {"ok":true}
 ```  
 
+## Using ccurl with jq
+
+[jq](http://stedolan.github.io/jq/) is a command-line json utility, and as ccurl returns JSON, it can be piped in-line to colour the JSON:
+
+```
+ ccurl '/newdatabase/_all_docs?limit=10&include_docs=true' | jq '.total_rows'
+```
+
+or to process or select the data:
+
+```
+ ccurl '/newdatabase/_all_docs?limit=10&include_docs=true' | jq '.'
+```
