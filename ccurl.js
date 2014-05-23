@@ -24,5 +24,4 @@ params.push("Content-Type: application/json");
 params.push(process.env.COUCH_URL + argv._);
 
 // do curl
-console.log(argv);
 require('child_process').spawn('curl', params, { stdio: 'inherit' });
