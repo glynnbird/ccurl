@@ -19,6 +19,7 @@ for (var i in argv) {
     }
   }  
 }
+params.push("-g");
 params.push("-H");
 params.push("Content-Type: application/json");
 params.push(process.env.COUCH_URL + argv._);
