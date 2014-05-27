@@ -1,6 +1,6 @@
 {
   "name": "ccurl",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "CouchDB command-line helper",
   "repository": "https://github.com/glynnbird/ccurl.git",
   "keywords": [
