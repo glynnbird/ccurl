@@ -120,7 +120,7 @@ Cloudant has a Lucene index which allows simple text queries to be performed e.g
 ccurl provides a helper parameter "--lucene", to allow you to specify lucene queries in clear text. 
 
 ```
-  ccurl "/mydatabase/_design/mydoc/_search/myindex" --lucene 'name:"fred" AND country:"gb"'
+  ccurl /mydatabase/_design/mydoc/_search/myindex --lucene 'name:"fred" AND country:"gb"'
 ```
 
 which is the equivalent of the curl statement:
