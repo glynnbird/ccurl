@@ -108,3 +108,26 @@ or to process or select the data:
 ```
  ccurl '/newdatabase/_all_docs?limit=10&include_docs=true' | jq '.'
 ```
+
+## Using ccurl with Cloudant Lucene search
+
+Cloudant has a Lucene index which allows simple text queries to be performed e.g. 
+
+```
+  name:"fred" AND country:"gb"
+```
+
+ccurl provides a helper parameter "--lucene", to allow you to specify lucene queries in clear text. 
+
+```
+  ccurl /mydatabase/_design/mydoc/_search/myindex --lucene 'name:"fred" AND country:"gb"'
+```
+
+which is the equivalent of the curl statement:
+
+```
+  curl 'https://myusername:mypassword@myhost.cloudant.com/mydatabase/_design/mydoc/_search/myindex?q=name%3A%22fred%22%20AND%20country%3D%22gb%22'
+```
+
+You are still permitted to lass through query string parameters in the URL too e.g. ?include_docs=true. 
+
