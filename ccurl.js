@@ -2,9 +2,12 @@ var argv = require('optimist').argv,
     params = [];
 
 // die if COUCH_URL is unknown
+var COUCH_URL = null;
 if (typeof process.env.COUCH_URL == "undefined") {
-  console.log("Requires environment variable COUCH_URL")
-  process.exit(1);
+  COUCH_URL = "http://127.0.0.1:5984";
+  console.warn("WARNING: no COUCH_URL environment variable found, assuming", COUCH_URL);
+} else {
+  COUCH_URL = process.env.COUCH_URL;
 }
     
 // use root if no relative URL supplied
@@ -21,8 +24,7 @@ for (var i in argv) {
 }
 params.push("-H");
 params.push("Content-Type: application/json");
-params.push(process.env.COUCH_URL + argv._);
+params.push(COUCH_URL + argv._);
 
 // do curl
-console.log(argv);
 require('child_process').spawn('curl', params, { stdio: 'inherit' });
