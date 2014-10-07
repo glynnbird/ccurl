@@ -46,6 +46,7 @@ if(lucene_query.length > 0) {
   the_url = url.format(url_bits);
 }
 
+params.push("-s");
 params.push("-g");
 params.push("-H");
 params.push("Content-Type: application/json");
