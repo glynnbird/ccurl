@@ -1,4 +1,8 @@
-var argv = require('optimist').argv,
+if(process.argv.length==2) {
+  process.argv.push("/");
+}
+var relative_url = process.argv.splice(-1,1),
+    argv = require('optimist').argv,
     url =  require('url'),
     params = [],
     lucene_query = "";
@@ -33,7 +37,7 @@ for (var i in argv) {
 }
 
 // calculate URL to visit
-var the_url = COUCH_URL + argv._
+var the_url = COUCH_URL + relative_url
 
 // fold in our lucene query
 if(lucene_query.length > 0) {

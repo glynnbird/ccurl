@@ -1,6 +1,6 @@
 {
   "name": "ccurl",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "CouchDB command-line helper",
   "repository": "https://github.com/glynnbird/ccurl.git",
   "keywords": [
@@ -10,7 +10,7 @@
     "command-line"
   ],
   "author": "Glynn Bird",
-  "license": "BSD",
+  "license": "Apache-2.0",
   "dependencies": {
     "optimist": "0.6.1"
   },
