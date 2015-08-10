@@ -1,13 +1,16 @@
+// add slash path if none provided
 if(process.argv.length==2) {
   process.argv.push("/");
 }
-var relative_url = process.argv.splice(-1,1),
-    argv = require('optimist').argv,
-    url =  require('url'),
-    params = [],
-    lucene_query = "";
 
-// die if COUCH_URL is unknown
+// remove node and path parameters
+process.argv.splice(0,2);
+
+var relative_url = process.argv.splice(-1,1),
+    debug = require('debug')('ccurl'),
+    params = process.argv;
+
+// assume localhost if COUCH_URL is unknown
 var COUCH_URL = null;
 if (typeof process.env.COUCH_URL == "undefined") {
   COUCH_URL = "http://127.0.0.1:5984";
@@ -15,46 +18,27 @@ if (typeof process.env.COUCH_URL == "undefined") {
 } else {
   COUCH_URL = process.env.COUCH_URL;
 }
-    
-// use root if no relative URL supplied
-argv._ = (typeof argv._ == "undefined") ? "/" : argv._;
 
-
-// calculate lucene query if present
-if(typeof argv.lucene !='undefined') {
-  lucene_query = "q=" + escape(argv.lucene);
-  delete argv.lucene;
-}
-
-// create list of parameters
-for (var i in argv) {
-  if (i != "_" && i != "$0") {
-    params.push("-" + i);
-    if (argv[i] !== true) {
-      params.push(argv[i]);    
+// check for presence of pre-existing -H parameter
+var checkForContentType = function(params) {
+  for (var i in params) {
+    if(params[i] == "-H" && params[i+1] && params[i+1].toLowerCase().match(/^content-type:/)) {
+      return true;
     }
-  }  
-}
-
-// calculate URL to visit
-var the_url = COUCH_URL + relative_url
-
-// fold in our lucene query
-if(lucene_query.length > 0) {
-  var url_bits = url.parse(the_url);
-  if (url_bits.search && url_bits.search.length > 0 ) {
-    url_bits.search += "&" + lucene_query;
-  } else {
-    url_bits.search = "?" + lucene_query;
   }
-  the_url = url.format(url_bits);
+  return false;
 }
 
+// add more command-line parameters
 params.push("-s");
 params.push("-g");
-params.push("-H");
-params.push("Content-Type: application/json");
-params.push(the_url);
+if (!checkForContentType) {
+  params.push("-H");
+  params.push("Content-Type: application/json");
+}
+params.push(COUCH_URL + relative_url);
+
+debug("curl",params);
 
 // do curl
 require('child_process').spawn('curl', params, { stdio: 'inherit' });
