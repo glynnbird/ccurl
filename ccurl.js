@@ -32,7 +32,7 @@ var checkForContentType = function(params) {
 // add more command-line parameters
 params.push("-s");
 params.push("-g");
-if (!checkForContentType) {
+if (!checkForContentType(params)) {
   params.push("-H");
   params.push("Content-Type: application/json");
 }
