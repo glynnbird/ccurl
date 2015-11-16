@@ -22,8 +22,11 @@ if (typeof process.env.COUCH_URL == "undefined") {
 // check for presence of pre-existing -H parameter
 var checkForContentType = function(params) {
   for (var i in params) {
-    if(params[i] == "-H" && params[i+1] && params[i+1].toLowerCase().match(/^content-type:/)) {
-      return true;
+    if (params[i] == "-H") {
+      var next = (parseInt(i)+1).toString();
+      if (params[next] && params[next].toLowerCase().match(/^content-type:/)) {
+        return true;
+      }
     }
   }
   return false;
