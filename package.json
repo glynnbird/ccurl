@@ -12,7 +12,7 @@
   "author": "Glynn Bird",
   "license": "Apache-2.0",
   "dependencies": {
-    "debug": "2.2.0"
+    "debug": "2.5.1"
   },
   "bin": {
     "ccurl": "bin/ccurl.bin.js"
