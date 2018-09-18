@@ -2,47 +2,53 @@
 
 If you use CouchDB, then you can access everything using curl. The trouble is, that it if you are using an authenticated, hosted service such as Cloudant's, then your credentials appear on your command-line history and there is a lot of typing. e.g.
 
-```
+```sh
   curl 'https://mypassword:MyPAssw0rd@myhost.cloudant.com/database/12345678'
 ```
 
-With ccurl, this becomes:
+With *ccurl*, this becomes:
 
-```
+```sh
   ccurl /database/12345678
 ```
 
 Or adding a document with curl:
 
-```
+```sh
   curl -X POST -H 'Content-type:application/json' 'https://mypassword:MyPAssw0rd@myhost.cloudant.com/database' -d'{"a":1,"b":2}'
 ```
 
-With ccurl, this becomes:
+With *ccurl*, this becomes:
 
-```
+```sh
   ccurl -X POST /database -d'{"a":1,"b":2}'
 ```
 
 ## Installing
 
-ccurl required Node.js (and npm). Simply type:
+*ccurl* required Node.js (and npm). Simply type:
 
-```
+```sh
   npm install -g ccurl
 ```
-
-You may need to prepend 'sudo' to this.
 
 ## Storing your credentials
 
 Your CouchDB credentials are taken from an environment variable "COUCH_URL". This can be set in your console with
 
-```
+```sh
   export COUCH_URL="https://mypassword:MyPAssw0rd@myhost.cloudant.com"
 ```
 
 or this line can be added to your "~/.bashrc" or "~/.bash_profile" file.
+
+If you don't want credentials stored in your command-line history, you can set an environment variable by extracting the credentials from a file e.g.
+
+```sh
+export COUCH_URL=`cat ~/.ibm/cloudant.json | jq -r .url`
+```
+
+where `~/.ibm/cloudant.json` is a JSON file that is readable only by my user containing the Cloudant service credentials.
 
 ## Using ccurl
 
@@ -55,41 +61,42 @@ or this line can be added to your "~/.bashrc" or "~/.bash_profile" file.
 
 ### Add a database
 
-```
+```sh
   > ccurl -X PUT /newdatabase
   {"ok":true}
 ```  
 
 ### Add a document
 
-```
+```sh
   > ccurl -X POST /newdatabase -d'{"a":1,"b":2}'
   {"ok":true,"id":"005fa466b4f690ccad7b4d194f071bbe","rev":"1-25f9b97d75a648d1fcd23f0a73d2776e"}
 ```
 
 ### Get a document
 
-```
+```sh
   > ccurl /newdatabase/005fa466b4f690ccad7b4d194f071bbe
   {"_id":"005fa466b4f690ccad7b4d194f071bbe","_rev":"1-25f9b97d75a648d1fcd23f0a73d2776e","a":1,"b":2}
 ```
 
 ### Get ten documents
 
-```
-  > ccurl '/newdatabase/_all_docs?limit=10&include_docs=true' {"total_rows":1,"offset":0,"rows":[{"id":"005fa466b4f690ccad7b4d194f071bbe","key":"005fa466b4f690ccad7b4d194f071bbe","value":{"rev":"1-25f9b97d75a648d1fcd23f0a73d2776e"},"doc":{"_id":"005fa466b4f690ccad7b4d194f071bbe","_rev":"1-25f9b97d75a648d1fcd23f0a73d2776e","a":1,"b":2}}]}
+```sh
+  > ccurl '/newdatabase/_all_docs?limit=10&include_docs=true' 
+  {"total_rows":1,"offset":0,"rows":[{"id":"005fa466b4f690ccad7b4d194f071bbe","key":"005fa466b4f690ccad7b4d194f071bbe","value":{"rev":"1-25f9b97d75a648d1fcd23f0a73d2776e"},"doc":{"_id":"005fa466b4f690ccad7b4d194f071bbe","_rev":"1-25f9b97d75a648d1fcd23f0a73d2776e","a":1,"b":2}}]}
 ```
 
 ### Remove a database
 
-```
+```sh
   > ccurl -X DELETE /newdatabase
   {"ok":true}
 ```  
 
 ### Other curl command-line parameters work too
 
-```
+```sh
   ccurl -h
   ccurl -v
   etc. 
@@ -99,13 +106,13 @@ or this line can be added to your "~/.bashrc" or "~/.bash_profile" file.
 
 [jq](http://stedolan.github.io/jq/) is a command-line json utility, and as ccurl returns JSON, it can be piped in-line to colour the JSON:
 
-```
+```sh
  ccurl '/newdatabase/_all_docs?limit=10&include_docs=true' | jq '.total_rows'
 ```
 
 or to process or select the data:
 
-```
+```sh
  ccurl '/newdatabase/_all_docs?limit=10&include_docs=true' | jq '.'
 ```
 
