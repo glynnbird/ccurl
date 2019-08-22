@@ -15,13 +15,13 @@ With *ccurl*, this becomes:
 Or adding a document with curl:
 
 ```sh
-  curl -X POST -H 'Content-type:application/json' 'https://mypassword:MyPAssw0rd@myhost.cloudant.com/database' -d'{"a":1,"b":2}'
+  curl -X POST -H 'Content-type:application/json' -d'{"a":1,"b":2}' 'https://mypassword:MyPAssw0rd@myhost.cloudant.com/database' 
 ```
 
 With *ccurl*, this becomes:
 
 ```sh
-  ccurl -X POST /database -d'{"a":1,"b":2}'
+  ccurl -X POST -d'{"a":1,"b":2}' /database 
 ```
 
 ## Installing
@@ -55,7 +55,7 @@ where `~/.ibm/cloudant.json` is a JSON file that is readable only by my user con
 If you prefer to use IBM's IAM authentication for a Cloudant service set up two environment variables:
 
 - `COUCH_URL` - the URL of your Cloudant service e.g. `https://myurl.cloudant.com` (note the absence of authentication credentials).
-- `IBM_IAM_KEY` - the IBM IAM API key that identifies you.
+- `IAM_API_KEY` - the IBM IAM API key that identifies you.
 
 `ccurl` exchanges your API key for a "bearer token" which is automatically inserted into the request. `ccurl` keeps a cache of the bearer token for subsequent requests. It's stored in `~/.ccurl`. 
 
@@ -78,7 +78,7 @@ If you prefer to use IBM's IAM authentication for a Cloudant service set up two 
 ### Add a document
 
 ```sh
-  > ccurl -X POST /newdatabase -d'{"a":1,"b":2}'
+  > ccurl -X POST -d'{"a":1,"b":2}' /newdatabase 
   {"ok":true,"id":"005fa466b4f690ccad7b4d194f071bbe","rev":"1-25f9b97d75a648d1fcd23f0a73d2776e"}
 ```
 
