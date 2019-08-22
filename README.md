@@ -1,6 +1,6 @@
 # ccurl - 'couchdb curl'
 
-If you use CouchDB, then you can access everything using curl. The trouble is, that it if you are using an authenticated, hosted service such as Cloudant's, then your credentials appear on your command-line history and there is a lot of typing. e.g.
+If you use CouchDB, then you can access everything using curl. The trouble is that it if you are using an authenticated, hosted service such as Cloudant's, then your credentials appear on your command-line history and there is a lot of typing. e.g.
 
 ```sh
   curl 'https://mypassword:MyPAssw0rd@myhost.cloudant.com/database/12345678'
@@ -26,7 +26,7 @@ With *ccurl*, this becomes:
 
 ## Installing
 
-*ccurl* required Node.js (and npm). Simply type:
+*ccurl* requires Node.js (and npm). Simply type:
 
 ```sh
   npm install -g ccurl
@@ -49,6 +49,15 @@ export COUCH_URL=`cat ~/.ibm/cloudant.json | jq -r .url`
 ```
 
 where `~/.ibm/cloudant.json` is a JSON file that is readable only by my user containing the Cloudant service credentials.
+
+## Using IBM IAM Authentication
+
+If you prefer to use IBM's IAM authentication for a Cloudant service set up two environment variables:
+
+- `COUCH_URL` - the URL of your Cloudant service e.g. `https://myurl.cloudant.com` (note the absence of authentication credentials).
+- `IBM_IAM_KEY` - the IBM IAM API key that identifies you.
+
+`ccurl` exchanges your API key for a "bearer token" which is automatically inserted into the request. `ccurl` keeps a cache of the bearer token for subsequent requests. It's stored in `~/.ccurl`. 
 
 ## Using ccurl
 
