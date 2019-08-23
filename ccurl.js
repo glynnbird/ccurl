@@ -7,9 +7,8 @@ if (process.argv.length === 2) {
 process.argv.splice(0, 2)
 
 const relativeURL = process.argv.splice(-1, 1)
-const keycache = require('./lib/keycache.js')
+const ccurllib = require('ccurllib')
 const debug = require('debug')('ccurl')
-const post = require('./lib/post.js')
 const params = process.argv
 
 // look for IAM_API_KEY
@@ -34,7 +33,7 @@ const getBearerToken = async (apiKey) => {
     },
     method: 'post'
   }
-  const response = await post(req)
+  const response = await ccurllib.request(req)
   return response
 }
 
@@ -65,13 +64,13 @@ debug('curl', params)
 // do curl
 const main = async () => {
   if (IAM_API_KEY) {
-    keycache.init()
+    ccurllib.init()
     let obj
-    obj = keycache.get(IAM_API_KEY)
+    obj = ccurllib.get(IAM_API_KEY)
     if (!obj) {
       obj = await getBearerToken(IAM_API_KEY)
       if (obj) {
-        keycache.set(IAM_API_KEY, obj)
+        ccurllib.set(IAM_API_KEY, obj)
       }
     }
     if (!obj) {
