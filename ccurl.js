@@ -79,6 +79,19 @@ const main = async () => {
     params.push('-H')
     params.push('Authorization: Bearer ' + obj.access_token)
   }
-  require('child_process').spawn('curl', params, { stdio: 'inherit' })
+
+  const cp = require('child_process')
+  const p = cp.spawn('curl', params)
+  const colorize = require('json-colorizer')
+  let output = ''
+  p.stdout.on('data', (data) => {
+    output += data.toString()
+  })
+  p.stderr.on('data', (data) => {
+    console.error(data.toString())
+  })
+  p.on('close', (code) => {
+    console.log(colorize(output, { pretty: true }))
+  })
 }
 main()
