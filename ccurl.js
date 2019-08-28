@@ -23,20 +23,6 @@ if (typeof process.env.COUCH_URL === 'undefined') {
   COUCH_URL = process.env.COUCH_URL
 }
 
-// const exchange API key for bearer token
-const getBearerToken = async (apiKey) => {
-  const req = {
-    url: 'https://iam.cloud.ibm.com/identity/token',
-    data: {
-      grant_type: 'urn:ibm:params:oauth:grant-type:apikey',
-      apikey: IAM_API_KEY
-    },
-    method: 'post'
-  }
-  const response = await ccurllib.request(req)
-  return response
-}
-
 // check for presence of pre-existing -H parameter
 const checkForContentType = function (params) {
   for (const i in params) {
@@ -68,7 +54,7 @@ const main = async () => {
     let obj
     obj = ccurllib.get(IAM_API_KEY)
     if (!obj) {
-      obj = await getBearerToken(IAM_API_KEY)
+      obj = await ccurllib.getBearerToken(IAM_API_KEY)
       if (obj) {
         ccurllib.set(IAM_API_KEY, obj)
       }
