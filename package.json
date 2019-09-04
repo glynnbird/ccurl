@@ -12,7 +12,7 @@
   "author": "Glynn Bird",
   "license": "Apache-2.0",
   "dependencies": {
-    "ccurllib": "^1.0.1",
+    "ccurllib": "^1.0.3",
     "debug": "^4.1.1",
     "json-colorizer": "^2.2.1"
   },
@@ -24,6 +24,6 @@
     "ccurl": "bin/ccurl.bin.js"
   },
   "devDependencies": {
-    "standard": "^14.0.0"
+    "standard": "^14.1.0"
   }
 }
