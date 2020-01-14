@@ -1,3 +1,9 @@
+// only colourise the output for terminals
+let isTerminal = true
+if (!process.stdout.isTTY) {
+  isTerminal = false
+}
+
 // add slash path if none provided
 if (process.argv.length === 2) {
   process.argv.push('/')
@@ -5,8 +11,10 @@ if (process.argv.length === 2) {
 
 // remove node and path parameters
 process.argv.splice(0, 2)
-
-const relativeURL = process.argv.splice(-1, 1)
+let relativeURL = process.argv.splice(-1, 1)[0]
+if (relativeURL[0] !== '/') {
+  relativeURL = '/' + relativeURL
+}
 const ccurllib = require('ccurllib')
 const debug = require('debug')('ccurl')
 const params = process.argv
@@ -21,6 +29,9 @@ if (typeof process.env.COUCH_URL === 'undefined') {
   console.warn('WARNING: no COUCH_URL environment variable found, assuming', COUCH_URL)
 } else {
   COUCH_URL = process.env.COUCH_URL
+}
+if (COUCH_URL[COUCH_URL.length - 1] === '/') {
+  COUCH_URL = COUCH_URL.substr(0, COUCH_URL.length - 1)
 }
 
 // check for presence of pre-existing -H parameter
@@ -71,13 +82,19 @@ const main = async () => {
   const colorize = require('json-colorizer')
   let output = ''
   p.stdout.on('data', (data) => {
-    output += data.toString()
+    if (isTerminal) {
+      output += data.toString()
+    } else {
+      process.stdout.write(data)
+    }
   })
   p.stderr.on('data', (data) => {
     console.error(data.toString())
   })
   p.on('close', (code) => {
-    console.log(colorize(output, { pretty: true }))
+    if (isTerminal) {
+      console.log(colorize(output, { pretty: true }))
+    }
   })
 }
 main()
