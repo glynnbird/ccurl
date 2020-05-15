@@ -65,9 +65,14 @@ const main = async () => {
     let obj
     obj = ccurllib.get(IAM_API_KEY)
     if (!obj) {
-      obj = await ccurllib.getBearerToken(IAM_API_KEY)
-      if (obj) {
-        ccurllib.set(IAM_API_KEY, obj)
+      try {
+        obj = await ccurllib.getBearerToken(IAM_API_KEY)
+        if (obj) {
+          ccurllib.set(IAM_API_KEY, obj)
+        }
+      } catch (e) {
+        console.error('IAM Auth failed')
+        process.exit(1)
       }
     }
     if (!obj) {
