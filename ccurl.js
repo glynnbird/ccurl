@@ -61,7 +61,6 @@ debug('curl', params)
 // do curl
 const main = async () => {
   if (IAM_API_KEY) {
-    ccurllib.init()
     let obj
     obj = ccurllib.get(IAM_API_KEY)
     if (!obj) {
