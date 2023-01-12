@@ -9,6 +9,13 @@ if (process.argv.length === 2) {
   process.argv.push('/')
 }
 
+// debugging 
+const debug = (data) => {
+  if (process.env.DEBUG && process.env.DEBUG.includes('ccurl')) {
+    console.log(data)
+  }
+}
+
 // remove node and path parameters
 process.argv.splice(0, 2)
 let relativeURL = process.argv.splice(-1, 1)[0]
@@ -16,7 +23,6 @@ if (relativeURL[0] !== '/') {
   relativeURL = '/' + relativeURL
 }
 const ccurllib = require('ccurllib')
-const debug = require('debug')('ccurl')
 const params = process.argv
 
 // look for IAM_API_KEY
@@ -56,7 +62,6 @@ if (!checkForContentType(params)) {
 }
 params.push(COUCH_URL + relativeURL)
 
-debug('curl', params)
 
 // do curl
 const main = async () => {
@@ -80,25 +85,17 @@ const main = async () => {
     params.push('-H')
     params.push('Authorization: Bearer ' + obj.access_token)
   }
-
+  debug(params)
   const cp = require('child_process')
   const p = cp.spawn('curl', params)
-  const colorize = require('json-colorizer')
-  let output = ''
   p.stdout.on('data', (data) => {
-    if (isTerminal) {
-      output += data.toString()
-    } else {
-      process.stdout.write(data)
-    }
+    process.stdout.write(data)
   })
   p.stderr.on('data', (data) => {
     console.error(data.toString())
   })
   p.on('close', (code) => {
-    if (isTerminal) {
-      console.log(colorize(output, { pretty: true }))
-    }
   })
+  
 }
 main()
