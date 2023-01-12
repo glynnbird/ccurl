@@ -1,19 +1,31 @@
-// only colourise the output for terminals
-let isTerminal = true
-if (!process.stdout.isTTY) {
-  isTerminal = false
+const cp = require('child_process')
+const ccurllib = require('ccurllib')
+
+// find path of supplied command
+const which = (cmd) => {
+  try {
+    return cp.execFileSync('which', [cmd]).toString().trim()
+  } catch (e) {
+    return null
+  }
 }
+
+// find the paths of curl and jq
+const curlPath = which('curl')
+const jqPath = which('jq')
+
+// we can't proceed without curl
+if (!curlPath) {
+  console.error('Error: cannot find curl in the path.')
+  process.exit(1)
+}
+
+// only pass the output to jq if the output is a terminal
+const isTerminal = !!process.stdout.isTTY
 
 // add slash path if none provided
 if (process.argv.length === 2) {
   process.argv.push('/')
-}
-
-// debugging 
-const debug = (data) => {
-  if (process.env.DEBUG && process.env.DEBUG.includes('ccurl')) {
-    console.log(data)
-  }
 }
 
 // remove node and path parameters
@@ -22,7 +34,7 @@ let relativeURL = process.argv.splice(-1, 1)[0]
 if (relativeURL[0] !== '/') {
   relativeURL = '/' + relativeURL
 }
-const ccurllib = require('ccurllib')
+
 const params = process.argv
 
 // look for IAM_API_KEY
@@ -37,7 +49,7 @@ if (typeof process.env.COUCH_URL === 'undefined') {
   COUCH_URL = process.env.COUCH_URL
 }
 if (COUCH_URL[COUCH_URL.length - 1] === '/') {
-  COUCH_URL = COUCH_URL.substr(0, COUCH_URL.length - 1)
+  COUCH_URL = COUCH_URL.substring(0, COUCH_URL.length - 1)
 }
 
 // check for presence of pre-existing -H parameter
@@ -62,7 +74,6 @@ if (!checkForContentType(params)) {
 }
 params.push(COUCH_URL + relativeURL)
 
-
 // do curl
 const main = async () => {
   if (IAM_API_KEY) {
@@ -85,17 +96,16 @@ const main = async () => {
     params.push('-H')
     params.push('Authorization: Bearer ' + obj.access_token)
   }
-  debug(params)
-  const cp = require('child_process')
-  const p = cp.spawn('curl', params)
-  p.stdout.on('data', (data) => {
-    process.stdout.write(data)
-  })
-  p.stderr.on('data', (data) => {
-    console.error(data.toString())
-  })
-  p.on('close', (code) => {
-  })
-  
+
+  // if jq is installed and the output is a terminal (not a file)
+  if (jqPath && isTerminal) {
+    // run curl & jq and pipe the output of one into the input of the other
+    const curl = cp.spawn(curlPath, params, { stdio: ['inherit', 'pipe', 'inherit'] })
+    const jq = cp.spawn(jqPath, ['.'], { stdio: ['pipe', 'inherit', 'pipe'] })
+    curl.stdout.pipe(jq.stdin)
+  } else {
+    // just run curl, spooling its stdout/stderr to ours
+    cp.spawnSync(curlPath, params, { stdio: 'inherit' })
+  }
 }
 main()

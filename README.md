@@ -113,16 +113,16 @@ If you prefer to use IBM's IAM authentication for a Cloudant service set up two 
 
 ## Using ccurl with jq
 
-[jq](http://stedolan.github.io/jq/) is a command-line json utility, and as ccurl returns JSON, it can be piped in-line to colour the JSON:
+If [jq](http://stedolan.github.io/jq/) is installed, *ccurl* automatically pipes the curl output to `jq .`, when stdout is a terminal. You may also do the piping yourself to extract a subset of the rdata e.g
 
 ```sh
  ccurl '/newdatabase/_all_docs?limit=10&include_docs=true' | jq '.total_rows'
 ```
 
-or to process or select the data:
+or 
 
 ```sh
- ccurl '/newdatabase/_all_docs?limit=10&include_docs=true' | jq '.'
+ ccurl '/newdatabase/_all_docs?limit=10&include_docs=true' | jq '.rows[0].doc.name | length'
 ```
 
 
