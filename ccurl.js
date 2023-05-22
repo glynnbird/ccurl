@@ -1,5 +1,6 @@
 const cp = require('child_process')
 const ccurllib = require('ccurllib')
+const pkg = require('./package.json')
 
 // find path of supplied command
 const which = (cmd) => {
@@ -72,6 +73,8 @@ if (!checkForContentType(params)) {
   params.push('-H')
   params.push('Content-Type: application/json')
 }
+params.push('-H')
+params.push(`User-Agent: ${pkg.name}/${pkg.version}(${process.title}${process.version})`)
 params.push(COUCH_URL + relativeURL)
 
 // do curl
