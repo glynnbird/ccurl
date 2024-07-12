@@ -5,8 +5,7 @@ const cp = require('child_process')
 const ccurllib = require('ccurllib')
 const pkg = require('./package.json')
 
-
-const makeTmpDir = function() {
+const makeTmpDir = function () {
   const tmp = os.tmpdir()
   const p = path.join(tmp, 'ccurl')
   if (!fs.existsSync(p)) {
