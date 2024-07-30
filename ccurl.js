@@ -1,6 +1,20 @@
+const os = require('os')
+const path = require('path')
+const fs = require('fs')
 const cp = require('child_process')
 const ccurllib = require('ccurllib')
 const pkg = require('./package.json')
+
+const makeTmpDir = function () {
+  const tmp = os.tmpdir()
+  const p = path.join(tmp, 'ccurl')
+  if (!fs.existsSync(p)) {
+    fs.mkdirSync(p)
+  }
+  return p
+}
+
+const cookieJar = path.join(makeTmpDir(), 'jar')
 
 // find path of supplied command
 const which = (cmd) => {
@@ -67,6 +81,10 @@ const checkForContentType = function (params) {
 }
 
 // add more command-line parameters
+params.push('-b')
+params.push(cookieJar)
+params.push('-c')
+params.push(cookieJar)
 params.push('-s')
 params.push('-g')
 if (!checkForContentType(params)) {
