@@ -1,2 +1,5 @@
 #!/usr/bin/env node
-require('../ccurl.js')
+import { ccurl } from '../ccurl.js'
+
+ccurl()
+

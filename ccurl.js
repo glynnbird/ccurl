@@ -1,15 +1,17 @@
-const os = require('os')
-const path = require('path')
-const fs = require('fs')
-const cp = require('child_process')
-const ccurllib = require('ccurllib')
-const pkg = require('./package.json')
+import os from 'node:os'
+import path from 'node:path'
+import { readFileSync, existsSync, mkdirSync } from 'node:fs'
+import { spawn, spawnSync, execFileSync } from 'node:child_process'
+import * as ccurllib from 'ccurllib'
+
+// read package meta data
+const pkg = JSON.parse(readFileSync('./package.json', { encoding: 'utf8' }))
 
 const makeTmpDir = function () {
   const tmp = os.tmpdir()
   const p = path.join(tmp, 'ccurl')
-  if (!fs.existsSync(p)) {
-    fs.mkdirSync(p)
+  if (!existsSync(p)) {
+    mkdirSync(p)
   }
   return p
 }
@@ -19,7 +21,7 @@ const cookieJar = path.join(makeTmpDir(), 'jar')
 // find path of supplied command
 const which = (cmd) => {
   try {
-    return cp.execFileSync('which', [cmd]).toString().trim()
+    return execFileSync('which', [cmd]).toString().trim()
   } catch (e) {
     return null
   }
@@ -96,7 +98,7 @@ params.push(`User-Agent: ${pkg.name}/${pkg.version}(${process.title}${process.ve
 params.push(COUCH_URL + relativeURL)
 
 // do curl
-const main = async () => {
+export async function ccurl() {
   if (IAM_API_KEY) {
     let obj
     obj = ccurllib.get(IAM_API_KEY)
@@ -121,12 +123,12 @@ const main = async () => {
   // if jq is installed and the output is a terminal (not a file)
   if (jqPath && isTerminal) {
     // run curl & jq and pipe the output of one into the input of the other
-    const curl = cp.spawn(curlPath, params, { stdio: ['inherit', 'pipe', 'inherit'] })
-    const jq = cp.spawn(jqPath, ['.'], { stdio: ['pipe', 'inherit', 'pipe'] })
+    const curl = spawn(curlPath, params, { stdio: ['inherit', 'pipe', 'inherit'] })
+    const jq = spawn(jqPath, ['.'], { stdio: ['pipe', 'inherit', 'pipe'] })
     curl.stdout.pipe(jq.stdin)
   } else {
     // just run curl, spooling its stdout/stderr to ours
-    cp.spawnSync(curlPath, params, { stdio: 'inherit' })
+    spawnSync(curlPath, params, { stdio: 'inherit' })
   }
 }
-main()
+
