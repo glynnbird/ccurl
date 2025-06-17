@@ -5,7 +5,7 @@ import { spawn, spawnSync, execFileSync } from 'node:child_process'
 import * as ccurllib from 'ccurllib'
 
 // read package meta data
-const pkg = JSON.parse(readFileSync('./package.json', { encoding: 'utf8' }))
+const pkg = JSON.parse(readFileSync(path.join(import.meta.dirname, 'package.json'), { encoding: 'utf8' }))
 
 const makeTmpDir = function () {
   const tmp = os.tmpdir()
